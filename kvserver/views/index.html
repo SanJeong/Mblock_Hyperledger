@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Bootstrap include -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- jquery 버전 유의 -->
+    <!-- slim/jquery, 3.1.0 윗 버전에서 ajax가 작동하지 않는 오류 확인 -->
+    <!-- Bootstrap의 CDN을 copy&paste 하되 Line 8의 버전만 3.1.0으로 수정하세요 -->
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+
+    <title>Page Title</title>
+</head>
+<body>
+    <div class="container">
+
+    <h1>This is a Fisrst Server</h1>
+    <p>You can store Key-value and read Key-values</p>
+    
+    <div id="find">
+    <input type="text" id="find-key" name="key" placeholder="key을 입력하세요"> <br><br></div>
+    <button class="btn btn-primary" id="find-btn">조회하기</button><br><br>
+    <div id="query-result"></div>
+    <br><br><br><br>
+    
+    <div id="append">
+    <input type="text" id="append-key" name="key" placeholder="새로 추가할 key을 입력하세요"><br>
+    <input type="text" id="append-val" name="val" placeholder="새로 추가할 val을 입력하세요"><br>
+    <button class="btn btn-danger" id="append-btn">추가하기</button><br><br>
+    <div id="append-result"></div>
+
+
+    </div>
+</body>
+<script>
+$("#find-btn").click(()=>{
+        const value = $("#find-key").val();
+        const url = "/query";
+        $.post(url, {key: value}, (data)=>{
+            // 조회했을 때 값이 null이 아니면 (일치하는 값이 존재한다면)
+            if(status != null){
+                const result = JSON.stringify(data);
+                const parsedData = JSON.parse(result);
+                $('#query-result').empty();
+                $('#query-result').append(parsedData.key+":"+parsedData.value);
+                }
+            })
+        })
+
+$("#append-btn").click(()=>{
+        const keyvalue = $("#append-key").val();
+        const valvalue = $("#append-val").val();
+        const url = "/invoke";
+        $.post(url, {key: keyvalue, value:valvalue}, (data)=>{
+            // 조회했을 때 값이 null이 아니면 (일치하는 값이 존재한다면)
+            if(status != null){
+                const result = JSON.stringify(data);
+                const parsedData = JSON.parse(result);
+                $('#append-result').append(parsedData.key+":"+parsedData.value+"\n");
+                }
+            })
+        })
+</script>
+</html>

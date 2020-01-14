@@ -45,6 +45,8 @@ func (s *SmartContract) addUser(APIstub shim.ChaincodeStubInterface, args []stri
 	if len(args) != 1 {
 		return shim.Error("fail!")
 	}
+	//이름중복체크
+	//args[0] getstate 에 
 	var user = UserRating{User: args[0], Average: 0}
 	userAsBytes, _ := json.Marshal(user)
 	APIstub.PutState(args[0], userAsBytes)
@@ -78,7 +80,6 @@ func (s *SmartContract) addRating(APIstub shim.ChaincodeStubInterface, args []st
 	rateCount := float64(len(user.Rates))
 
 	user.Rates=append(user.Rates,Rate)
-
 	user.Average = (rateCount*user.Average+newRate)/(rateCount+1)
 	// update to User World state
 	userAsBytes, err = json.Marshal(user);
