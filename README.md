@@ -1,5 +1,5 @@
 # mblock
-Grace.YEO / San.Jeong
+San.Jeong
 # hyperledger fabric sample 
 
 ## pre-condition
