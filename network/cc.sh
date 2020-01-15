@@ -1,14 +1,22 @@
-#chaincode insall
-docker exec cli peer chaincode install -n sacc -v 1.0 -p github.com/sacc
+#!/bin/bash
+instruction=$1
+version=$2
+
+set -ev
+
+#chaincode install
+docker exec cli peer chaincode install -n cc -v $version -p github.com/mblock
 #chaincode instatiate
-docker exec cli peer chaincode instantiate -n sacc -v 1.0 -C mychannel -c '{"Args":["a","100"]}' -P 'OR ("Org1MSP.member", "Org2MSP.member","Org3MSP.member")'
+docker exec cli peer chaincode $instruction -n cc -v $version -C mychannel -c '{"Args":[]}' -P 'OR ("Org1MSP.member")'
 sleep 5
-#chaincode query a
-docker exec cli peer chaincode query -n sacc -C mychannel -c '{"Args":["get","a"]}'
-#chaincode invoke b
-docker exec cli peer chaincode invoke -n sacc -C mychannel -c '{"Args":["set","b","200"]}'
+#chaincode invoke user1
+docker exec cli peer chaincode invoke -n cc -C mychannel -c '{"Args":["addUser","user1","sanjeong"]}'
 sleep 5
-#chaincode query b
-docker exec cli peer chaincode query -n sacc -C mychannel -c '{"Args":["get","b"]}'
+#chaincode query user1
+docker exec cli peer chaincode query -n cc -C mychannel -c '{"Args":["readMedi","user1"]}'
+
+#chaincode invoke add rating
+docker exec cli peer chaincode invoke -n cc -C mychannel -c '{"Args":["addMedi","user1","20200101","타이레놀"]}'
+sleep 5
 
 echo '-------------------------------------END-------------------------------------'

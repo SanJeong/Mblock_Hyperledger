@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Bootstrap include -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- fontawsome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/v4-shims.css">
+
+    <!-- jquery 버전 유의 -->
+    <!-- slim/jquery, 3.1.0 윗 버전에서 ajax가 작동하지 않는 오류 확인 -->
+    <!-- Bootstrap의 CDN을 copy&paste 하되 Line 8의 버전만 3.1.0으로 수정하세요 -->
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" />  
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>  
+    <script src="http://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>  
+
+    <title>MBLOCK</title>
+</head>
+<body>
+    <div class="container">
+
+    <h1>Hi Hello</h1><br>
+    <p>You can store your medi-history and query them</p><br><br>
+    
+    <div id="new" class="row justify-content-md-center"><div class="col-lg">
+        <div id="new-alert"></div><br>
+        <h3>신원 신규 등록</h3><br>
+        <input type="text" id="new-email" name="email" placeholder="이메일을 입력하세요"><br><br>
+        <input type="text" id="new-name" name="name" placeholder="이름을 입력하세요"><br><br>
+        <button class="btn btn-primary" id="new-btn">신규 등록</button><br><br>
+    </div></div>
+
+    <div id="add" class="row justify-content-md-center"><div class="col-lg">
+        <div id="add-alert"></div><br>
+        <h3>신규 처방약 추가</h3><br>
+        <input type="text" id="add-email" name="email" placeholder="이메일을 입력하세요"><br><br>
+        <input type="text" id="testDatepicker" name="date" placeholder="날짜를 입력하세요"><br><br>
+        <input type="text" id="add-medi" name="medi" placeholder="약을 입력하세요"><br><br>
+        <button class="btn btn-primary" id="add-btn">처방약 추가</button><br><br>
+    </div></div>
+
+    <div id="find" class="row justify-content-md-center"><div class="col-lg">
+        <div id="find-alert"></div>
+        <h3>처방약 조회</h3><br>
+        <input type="text" id="find-email" name="email" placeholder="이메일을 입력하세요"><br><br>
+        <button class="btn btn-primary" id="find-btn">조회하기</button><br><br>
+            <table class="table">
+                <tbody id="table">
+                </tbody>
+            </table>
+    </div></div>
+    
+
+
+</body>
+<script>
+    
+$(function() {
+    $( "#testDatepicker" ).datepicker({
+        dateFormat: "yy.mm.dd"
+    });
+});
+
+$("#new-btn").click(()=>{
+        const emailvalue = $("#new-email").val();
+        const namevalue = $("#new-name").val();
+        const url = "/addUser";
+        $.post(url, {email: emailvalue, name: namevalue}, (data,status)=>{
+            // 조회했을 때 값이 null이 아니면 (일치하는 값이 존재한다면)
+            if(status == "success"){
+                const result = JSON.stringify(data);
+                const parsedData = JSON.parse(result);
+                $('#new-alert').empty()
+                $('#new-alert').append("<div id='success' class='alert alert-success'>추가를 성공했습니다!</div>"+":"+parsedData.name);
+                $('#new-alert').fadeOut(4000);
+                }
+            })
+        })
+
+$("#add-btn").click(()=>{
+        const emailvalue = $("#add-email").val();
+        const datevalue = $("#testDatepicker").val();
+        const medivalue = $("#add-medi").val();
+        const url = "/addMedi";
+        $.post(url, {email: emailvalue, date:datevalue, medicine:medivalue}, (data,status)=>{
+            if(status == "success"){
+                $('#add-alert').empty()
+                $('#add-alert').append("<div id='success' class='alert alert-success'>점수추가를 성공했습니다!</div>");
+                $('#add-alert').fadeOut(4000);
+                }
+            })
+        })
+$("#find-btn").click(()=>{
+        const value = $("#find-email").val();
+        const url = "/readMedi/" + value
+        $.post(url, {email: value}, (data)=>{
+            if(status != null){
+                $('#find-alert').append("<div id='success' class='alert alert-success'>조회를 성공했습니다!</div>");
+                $('#find-alert').fadeOut(2000);
+                const test = JSON.stringify(data)
+                const parsedData = JSON.parse(test)
+                $('#table').empty();
+                
+                $('#table').append("<tr><th scope='row'>이름</th><td>" + parsedData.name + "</td></tr>")
+                for(var i = 0; i < parsedData.medi.length; i++ ){
+                    $('#table').append("<tr><th scope='row'>처방 날짜</th><td>" + parsedData.medi[i].date + "</td></tr>")
+                    $('#table').append("<tr><th scope='row'>처방약</th><td>" + parsedData.medi[i].medicine + "</td></tr>")
+                }
+            }        
+        })
+    })
+</script>
+<style>
+        .container{
+            width: 100%;
+            height: 500px;
+            margin: 50px 50px;
+            padding: 20px 20px;
+            text-align: center;
+            position: absolute;
+            left: 50%;
+            transform:translateX(-50%);        
+        }
+    
+        button{
+            margin: 20px 10px;
+        }
+    
+        input{
+            width: 300px;
+            padding: 10px 8px;
+        }
+    
+        .col-6{
+            padding: 20px 10px;
+        }
+    </style>
+</html>
