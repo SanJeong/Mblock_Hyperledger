@@ -24,6 +24,10 @@ app.get('/', (req, res)=>{
     res.sendFile(__dirname + '/index.html');
 })
 
+app.get('/main', (req, res)=>{
+    res.sendFile(__dirname + '/views/index2.html');
+})
+
 async function cc_call(fn_name, args){
     
     const walletPath = path.join(process.cwd(), 'wallet');
