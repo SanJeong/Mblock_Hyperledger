@@ -104,9 +104,12 @@ $("#find-btn").click(()=>{
                 const test = JSON.stringify(data)
                 const parsedData = JSON.parse(test)
                 $('#table').empty();
-                
+                parsedData.medi.sort(function(a, b) { // 오름차순
+                    return a.date < b.date ? -1 : a.date > b.date ? 1 : 0;});
+                    
                 $('#table').append("<tr><th scope='row'>이름</th><td>" + parsedData.name + "</td></tr>")
                 for(var i = 0; i < parsedData.medi.length; i++ ){
+                    
                     $('#table').append("<tr><th scope='row'>처방 날짜</th><td>" + parsedData.medi[i].date + "</td></tr>")
                     $('#table').append("<tr><th scope='row'>처방약</th><td>" + parsedData.medi[i].medicine + "</td></tr>")
                 }
